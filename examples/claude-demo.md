@@ -1,0 +1,3 @@
+Use the actual installed /github-project-board skill. The request is offline planning only, using backlog.json: read the skill and the supplied fictional sample. Do not run live discovery, claim work, post comments, or invent API execution. You have only Read and Skill tools.
+
+Keep the final response under 10 short lines, no tables or long commands. Start with "Sample backlog reviewed." Identify the highest-priority eligible Todo issue, its priority/size, and the proposed claim plus structured progress comment. Say that a live workflow must discover the board fields and re-check the item first. End with "Proceed with live discovery?" Do not imply that live data was fetched or any action completed.

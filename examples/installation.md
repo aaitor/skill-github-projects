@@ -19,8 +19,9 @@ gh project list --owner <OWNER>   # verify access
 A symlink keeps the installed skill in sync with the repo as you pull updates.
 
 ```bash
-git clone https://github.com/aaitor/github-projects-skill.git
-ln -s "$(pwd)/github-projects-skill" ~/.claude/skills/github-project-board
+git clone https://github.com/aaitor/skill-github-projects.git
+mkdir -p ~/.claude/skills
+ln -s "$(pwd)/skill-github-projects" ~/.claude/skills/github-project-board
 ```
 
 The skill now appears as `github-project-board`. Invoke it with `/github-project-board`
@@ -31,8 +32,9 @@ or let Claude activate it when you mention a board, backlog, or sprint.
 Use a copy when you want a fixed version that won't change when the repo updates:
 
 ```bash
-git clone https://github.com/aaitor/github-projects-skill.git
-cp -r github-projects-skill ~/.claude/skills/github-project-board
+git clone https://github.com/aaitor/skill-github-projects.git
+mkdir -p ~/.claude/skills
+cp -r skill-github-projects ~/.claude/skills/github-project-board
 ```
 
 Re-run the `cp` to update.
@@ -44,7 +46,7 @@ under the project's `.claude/skills/` directory:
 
 ```bash
 mkdir -p .claude/skills
-cp -r /path/to/github-projects-skill .claude/skills/github-project-board
+cp -r /path/to/skill-github-projects .claude/skills/github-project-board
 git add .claude/skills/github-project-board
 git commit -m "chore: add github-project-board skill"
 ```
@@ -72,7 +74,7 @@ ssh user@your-host
 # on the remote host:
 gh auth login
 gh auth refresh -s project
-git clone https://github.com/aaitor/github-projects-skill.git ~/skills/github-project-board
+git clone https://github.com/aaitor/skill-github-projects.git ~/skills/github-project-board
 cat ~/skills/github-project-board/SKILL.md   # load into the agent's context
 ```
 

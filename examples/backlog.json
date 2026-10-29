@@ -1,0 +1,39 @@
+{
+  "source": "Fictional offline sample; not a GitHub API response.",
+  "board": {
+    "title": "Sample engineering backlog",
+    "rules": "Select eligible Todo work by Priority; humans control In Definition and Done."
+  },
+  "items": [
+    {
+      "number": 42,
+      "title": "Fix expired session handling",
+      "status": "Todo",
+      "priority": "Critical",
+      "size": "S",
+      "labels": [
+        "coding"
+      ]
+    },
+    {
+      "number": 43,
+      "title": "Improve install documentation",
+      "status": "Todo",
+      "priority": "High",
+      "size": "S",
+      "labels": [
+        "docs"
+      ]
+    },
+    {
+      "number": 44,
+      "title": "Add usage metrics",
+      "status": "In progress",
+      "priority": "Very High",
+      "size": "M",
+      "labels": [
+        "coding"
+      ]
+    }
+  ]
+}

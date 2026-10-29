@@ -56,6 +56,10 @@ This skill expects a board with three single-select fields — `Status`
 (Critical → Zero), and `Size` (XL → XS). To create a compatible board from scratch,
 see `docs/board-setup.md`.
 
+## Read-only and offline requests
+
+Honor the requested scope: a backlog summary or proposed action does not authorize claims, comments, or status changes. For a supplied offline snapshot, analyze that input and label the result as a sample; do not claim live discovery occurred. Before an authorized live operation, use the discovery step below and re-read the current item before claiming it.
+
 ## Board Discovery (Mandatory First Step)
 
 Before any board operation, discover the board structure. All field IDs and option IDs are resolved dynamically — never hardcode them.

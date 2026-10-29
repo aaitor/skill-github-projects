@@ -1,164 +1,112 @@
-# GitHub Project Board Skill
+<p align="center">
+  <img src="https://raw.githubusercontent.com/aaitor/assets/ffdc5e1302cf6276c5e765cec19cc3204903c766/banners/skill-github-projects.svg" alt="GitHub Projects — turn your backlog into coordinated agent work" width="100%">
+</p>
 
-[![License: MIT](https://img.shields.io/badge/License-MIT-blue.svg)](LICENSE)
+<h1 align="center">GitHub Projects Skill</h1>
+<p align="center">Turn your backlog into coordinated agent work.</p>
+<p align="center">
+  <a href="#quick-start">Quick start</a> ·
+  <a href="examples/walkthrough.md">Tutorial</a> ·
+  <a href="#documentation">Documentation</a> ·
+  <a href="#contributing-and-support">Contribute</a>
+</p>
+<p align="center">
+  <a href="LICENSE"><img src="https://img.shields.io/badge/license-MIT-89E5CC?style=flat-square&amp;labelColor=101827" alt="MIT license"></a>
+  <a href="https://github.com/aaitor/skill-github-projects/actions/workflows/quality.yml"><img src="https://github.com/aaitor/skill-github-projects/actions/workflows/quality.yml/badge.svg" alt="Offline repository checks"></a>
+</p>
 
-A skill that lets AI agents (Claude Code, OpenClaw, or any agent with shell access)
-drive **GitHub Project Boards (Projects v2)** through the `gh` CLI. Agents read
-backlogs, claim work, update status, post structured progress comments, and hand off to
-each other through a shared set of board conventions.
+Give Claude Code and other shell-capable agents a shared workflow for **GitHub Projects v2**. Read backlogs, select work by priority and label, claim issues, leave structured progress updates, and hand work back for human approval through the `gh` CLI.
 
-## Why
+## Demo
 
-GitHub Projects v2 is a structured place to manage work. This skill gives an agent the
-vocabulary and workflow to participate in that process the way a teammate would — pick up
-the highest-priority issue, report progress, ask for clarification, and submit finished
-work for approval. Multiple agents can share one board without colliding.
+![Install the skill and review a sample backlog with real Claude Code](assets/terminal-demo.gif)
 
-## Contents
+A real Claude Code session: install the skill, review a **fictional local backlog**, and propose the next task. The harness loads the actual skill; the sample is not live GitHub data. No issues, comments, or board fields are changed. See the [recording guide](examples/README.md) for the input and reproduction command.
 
-- [Prerequisites](#prerequisites)
-- [Quick Start](#quick-start)
-- [Installation](#installation)
-- [The Board Model](#the-board-model)
-- [Multi-Agent Setup](#multi-agent-setup)
-- [Documentation](#documentation)
-- [Repo Structure](#repo-structure)
-- [Contributing](#contributing)
-- [License](#license)
+## Quick start
 
-## Prerequisites
-
-- **`gh` CLI** installed and authenticated.
-- **`project` scope** enabled: `gh auth refresh -s project`.
-- A GitHub Projects v2 board (see [Board Setup Guide](docs/board-setup.md) to create one).
-
-Verify access:
+Install into your project's Claude Code skills directory:
 
 ```bash
-gh project list --owner <OWNER>
+git clone https://github.com/aaitor/skill-github-projects .claude/skills/github-project-board
 ```
 
-## Quick Start
+For live board access, install and authenticate [GitHub CLI](https://cli.github.com/), grant project access to the account/token you use, and supply your board owner and number. See [installation](docs/installation.md) for permissions and other harnesses.
 
-Once the skill is installed, an agent can discover and work any board. Replace `<OWNER>`
-and `<NUMBER>` with your board's owner and project number.
+Start `claude`, then ask:
 
-```bash
-# Discover board structure (field and option IDs are resolved at runtime, never hardcoded)
-gh project view <NUMBER> --owner <OWNER> --format json
-gh project field-list <NUMBER> --owner <OWNER> --format json
-
-# List Todo items
-gh project item-list <NUMBER> --owner <OWNER> --format json --limit 100 \
-  | jq '[.items[] | select(.status == "Todo")]'
-
-# Claim an issue (move to "In progress")
-gh project item-edit --project-id <PROJECT_ID> --id <ITEM_ID> \
-  --field-id <STATUS_FIELD_ID> --single-select-option-id <IN_PROGRESS_OPTION_ID>
-
-# Post a structured progress comment
-gh issue comment <ISSUE_URL> --body "## Agent Update — Claude Code
-**Status**: Working
-**Action**: Started implementation
----
-_Updated by \`Claude Code\` at $(date -u +%Y-%m-%dT%H:%M:%SZ)_"
+```text
+/github-project-board Read project #<NUMBER> for <OWNER>.
+Show the highest-priority Todo item and your proposed next action.
+Do not claim work or post comments.
 ```
 
-For the full end-to-end story, see [`examples/walkthrough.md`](examples/walkthrough.md).
+Expected result: the agent discovers the board README and current fields, reads the backlog, and recommends a task without modifying it. To try the skill without GitHub credentials, use the [sample-backlog exercise](examples/README.md#try-the-sample).
 
-## Installation
+## Features
 
-The skill is plain Markdown, so "installing" it means making `SKILL.md` and `references/`
-available to your agent. The two most common paths:
+- **Dynamic discovery:** resolve project, field, and option IDs at runtime.
+- **Priority-based work:** select Todo items, optionally scoped by issue labels.
+- **Shared progress format:** structured comments for updates, blockers, and handoffs.
+- **Human approval:** agents submit completed work as Ready; humans control Done.
+- **Portable instructions:** plain Markdown, with command references and GraphQL recipes.
 
-```bash
-# Claude Code — symlink (stays in sync with repo updates)
-git clone https://github.com/aaitor/github-projects-skill.git
-ln -s "$(pwd)/github-projects-skill" ~/.claude/skills/github-project-board
+The skill is instructions, not a background worker or locking service. Label scoping helps divide work; overlapping agents still need coordination. Large boards need pagination beyond the examples' first 100 items. See [configuration and limitations](docs/configuration.md).
 
-# Any other agent — load the content as context
-cat SKILL.md references/*.md > github-project-board-context.md
+## Board workflow
+
+```text
+In Definition → Todo → In progress → To Review → Todo (feedback)
+                                  → Ready → Done (human approval)
 ```
 
-Recipes for copy installs, project-scoped skills, generic LLM agents, remote/SSH agents,
-and CI are in [`examples/installation.md`](examples/installation.md).
+| Field | Options |
+| --- | --- |
+| Status | In Definition, Todo, In progress, To Review, Ready, Done |
+| Priority | Critical, Very High, High, Average, Low, Very Low, Zero |
+| Size | XL, L, M, S, XS |
 
-## The Board Model
+Agents read your board README for local conventions and discover the actual option IDs. `In Definition` and `Done` remain human-controlled. [Set up a compatible board](docs/board-setup.md), then follow the [practical walkthrough](examples/walkthrough.md) from discovery through review. That tutorial uses fictional data and marks commands that change the board.
 
-The skill expects three single-select fields. The [Board Setup Guide](docs/board-setup.md)
-creates them from scratch with `gh`.
+## Usage
 
-| Field | Type | Options |
-|-------|------|---------|
-| **Status** | SingleSelect | In Definition, Todo, In progress, To Review, Ready, Done |
-| **Priority** | SingleSelect | Critical, Very High, High, Average, Low, Very Low, Zero |
-| **Size** | SingleSelect | XL, L, M, S, XS |
-
-The standard status lifecycle, and who owns each transition:
-
-```
-In Definition ──▶ Todo ──▶ In progress ──▶ To Review ──▶ Todo   (feedback)
-                                        └─▶ Ready ──────▶ Done   (approved)
-   (human)      (human)    (agent)         (agent)       (human)
+```text
+/github-project-board Summarize Todo items on project #<NUMBER> for <OWNER>.
+Only consider issues labeled docs. Propose a task; do not update anything.
 ```
 
-Agents only move items between `Todo → In progress → (To Review | Ready)`. `In Definition`
-and `Done` are human-controlled. Add a **README to your board** (board settings, or
-`gh project edit --readme`) describing any board-specific rules — agents read it at runtime
-and treat it as authoritative.
-
-## Multi-Agent Setup
-
-Run several independent agents on one board by scoping each to a **label**:
-
-1. Create labels: `gh label create research --repo <OWNER>/<REPO>`
-2. Label issues: `gh issue edit <ISSUE_URL> --add-label research`
-3. Tell each agent its label scope — it only picks up matching issues.
-
-An agent with no label filter processes any issue. See
-[`examples/usage-scenarios.md`](examples/usage-scenarios.md) (Scenario 2) for a worked
-example.
+Once you authorize work, the skill provides conventions for claiming an issue, reporting progress, and submitting it as Ready. See [usage scenarios](examples/usage-scenarios.md) for triage, decomposition, clarification, and handoffs.
 
 ## Documentation
 
-| Document | What it covers |
-|----------|----------------|
-| [`SKILL.md`](SKILL.md) | The skill definition — install this. |
-| [`docs/board-setup.md`](docs/board-setup.md) | Create a compatible board from scratch with `gh`. |
-| [`examples/installation.md`](examples/installation.md) | Install recipes for Claude Code, generic agents, SSH/remote, CI. |
-| [`examples/usage-scenarios.md`](examples/usage-scenarios.md) | Natural-language prompts → what the agent does. |
-| [`examples/walkthrough.md`](examples/walkthrough.md) | Full end-to-end board walkthrough. |
-| [`references/gh-cli-commands.md`](references/gh-cli-commands.md) | Complete `gh` command reference. |
-| [`references/graphql-recipes.md`](references/graphql-recipes.md) | Advanced queries (label/assignee filters, bulk ops). |
-| [`references/agent-workflow-patterns.md`](references/agent-workflow-patterns.md) | Step-by-step agent playbooks. |
+- [Installation and permissions](docs/installation.md) · [Other installation recipes](examples/installation.md)
+- [Board setup](docs/board-setup.md) · [Configuration and limitations](docs/configuration.md)
+- [Practical walkthrough](examples/walkthrough.md) · [Usage scenarios](examples/usage-scenarios.md)
+- [CLI reference](references/gh-cli-commands.md) · [GraphQL recipes](references/graphql-recipes.md) · [Agent workflows](references/agent-workflow-patterns.md)
+- [Troubleshooting](docs/troubleshooting.md) · [Security and privacy](docs/security-and-privacy.md)
+- [Banner generation](docs/branding.md) · [Demo recording](examples/README.md)
 
-## Repo Structure
+## Repository layout
 
-```
-├── README.md                           # This file
-├── SKILL.md                            # The skill definition (install this)
-├── docs/
-│   └── board-setup.md                  # Create a compatible board from scratch
-├── references/
-│   ├── gh-cli-commands.md              # Full command reference with examples
-│   ├── graphql-recipes.md              # Advanced queries (label/assignee filter, bulk ops)
-│   └── agent-workflow-patterns.md      # Step-by-step agent playbooks
-├── examples/
-│   ├── installation.md                 # Install recipes for multiple agents/setups
-│   ├── usage-scenarios.md              # Natural-language usage examples
-│   └── walkthrough.md                  # End-to-end board walkthrough
-└── LICENSE                             # MIT license
+```text
+SKILL.md       Installed skill: github-project-board
+references/    CLI commands, GraphQL queries, workflow patterns
+docs/          Installation, board setup, configuration, troubleshooting
+examples/      Tutorials, fictional backlog, real harness recording
+assets/        Banner, social preview, terminal demo, font notices
+scripts/       Offline repository checks
 ```
 
-## Contributing
+## Contributing and support
 
-Issues and pull requests are welcome. The skill is documentation, so keep changes:
+Questions, bugs, and ideas: [Issues](https://github.com/aaitor/skill-github-projects/issues). Read [CONTRIBUTING.md](CONTRIBUTING.md), [CODE_OF_CONDUCT.md](CODE_OF_CONDUCT.md), and [CHANGELOG.md](CHANGELOG.md). Report vulnerabilities privately through [SECURITY.md](SECURITY.md).
 
-- **Generic** — no org-, user-, or board-specific references in `SKILL.md` or `references/`
-  (use `<OWNER>` / `<NUMBER>` placeholders; `octo-org` in examples).
-- **ID-free** — never hardcode field or option IDs; resolve them at runtime.
-- **Consistent** — follow the Agent Comment Convention and status model already in use.
+Run `python3 scripts/check.py` after installing `requirements-dev.txt`. CI checks packaging, sources, and local documentation; live GitHub operations and model recordings are manual checks.
 
 ## License
 
-MIT — see [LICENSE](LICENSE).
+[MIT](LICENSE). The existing license is preserved. Embedded banner fonts retain their [OFL notices](assets/font-notices/NOTICE.md).
+
+---
+
+Built by [Aitor Argomaniz](https://github.com/aaitor) · [LinkedIn](https://www.linkedin.com/in/aitorargomaniz) · [More open source](https://github.com/aaitor?tab=repositories)

@@ -21,7 +21,8 @@ project number for your own board.
 
 ## Scenario 2: Scope an agent to a domain with labels
 
-Run several agents on one board without collisions by giving each a label scope.
+Divide work between agents by giving each a label scope. Overlapping labels still
+require coordination; this convention is not an exclusive claim lock.
 
 **You (to the research agent):**
 > "You are the research agent. Only work issues labelled `research` on board #1 for `<OWNER>`."

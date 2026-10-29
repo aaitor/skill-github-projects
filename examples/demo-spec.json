@@ -1,0 +1,43 @@
+{
+  "name": "Aitor repository demo",
+  "reference": {
+    "repository": "https://github.com/aaitor/skill-publish-to-linkedin",
+    "revision": "fe46d8ae5e222d77fbda9c1169a12b2907130910",
+    "gif": "assets/terminal-demo.gif",
+    "duration_seconds": 16.96
+  },
+  "visual": {
+    "width": 1280,
+    "height": 640,
+    "background": "#000000",
+    "foreground": "#F4F7FB",
+    "accent": "#89E5CC",
+    "font_family": "DejaVu Sans Mono",
+    "font_size": 20,
+    "padding": 28,
+    "window_bar": "Colorful",
+    "border_radius": 0,
+    "typing_speed_ms": 25
+  },
+  "timing": {
+    "target_seconds": [
+      10,
+      20
+    ],
+    "after_install_seconds": 3,
+    "before_harness_seconds": 1,
+    "final_result_seconds": 8,
+    "clone_timeout_seconds": 30,
+    "harness_timeout_seconds": 180,
+    "omit_waits": true
+  },
+  "sequence": [
+    "Install the actual project or skill",
+    "Invoke the actual harness or tool",
+    "Show the useful result or approval prompt"
+  ],
+  "agent_skill_harness": "Claude Code",
+  "capture": "Record real commands and actual harness output; do not fabricate an agent conversation or substitute a mocked identity for the main demo.",
+  "external_actions": "Default to preview and the approval prompt. Publishing requires explicit approval of the exact content.",
+  "output": "assets/terminal-demo.gif"
+}

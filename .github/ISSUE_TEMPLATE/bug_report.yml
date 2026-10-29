@@ -1,0 +1,28 @@
+name: Bug report
+description: Report a reproducible problem.
+title: "[Bug]: "
+body:
+  - type: markdown
+    attributes:
+      value: "For vulnerabilities, follow SECURITY.md instead of opening a public issue."
+  - type: textarea
+    id: problem
+    attributes:
+      label: What happened?
+      description: Include what you expected and what happened instead.
+    validations:
+      required: true
+  - type: textarea
+    id: reproduce
+    attributes:
+      label: Steps to reproduce
+      description: Include a minimal example and sanitized error output. Do not include secrets.
+    validations:
+      required: true
+  - type: input
+    id: environment
+    attributes:
+      label: Version and environment
+      description: Release or commit, operating system, and relevant runtime versions.
+    validations:
+      required: true

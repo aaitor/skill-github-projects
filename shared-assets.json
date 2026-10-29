@@ -1,0 +1,15 @@
+{
+  "template": {
+    "repository": "https://github.com/aaitor/oss-repo-template",
+    "revision": "fb09a0208fffac8b56ce917bf5d6bf3805f2dbd3"
+  },
+  "repository": "https://github.com/aaitor/assets",
+  "revision": "ffdc5e1302cf6276c5e765cec19cc3204903c766",
+  "files": {
+    "assets/hero.svg": "banners/skill-github-projects.svg",
+    "assets/social-preview.svg": "social/skill-github-projects.svg",
+    "assets/social-preview.png": "social/skill-github-projects.png",
+    "examples/theme.tape": "terminal/theme.tape"
+  },
+  "demo_spec": "examples/demo-spec.json"
+}
