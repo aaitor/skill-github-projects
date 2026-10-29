@@ -4,6 +4,7 @@
 
 <h1 align="center">GitHub Projects Skill</h1>
 <p align="center">Turn your backlog into coordinated agent work.</p>
+<p align="center"><a href="https://github.com/aaitor/skill-github-projects/releases/tag/v1.0">v1.0 release</a></p>
 <p align="center">
   <a href="#quick-start">Quick start</a> ·
   <a href="examples/walkthrough.md">Tutorial</a> ·
